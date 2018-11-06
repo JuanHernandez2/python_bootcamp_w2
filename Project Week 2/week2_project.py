@@ -20,6 +20,17 @@ class Contact:
             c = cls(" "," "," ", " ", " "," ")
             return c
 
+class Phone_number():
+        
+       def __init__(self, *numbers):
+            self.contact_numbers = [ ]
+            for n in numbers:
+                self.contact_numbers.append(n)
+
+       def __str__(self):
+               return str(self.contact_numbers)
+
+
 def create_contact(contacts, c):
         """This function create a new contact with the parameter information and then is
            added to the contact list"""
@@ -35,6 +46,7 @@ def save_contacts(contacts):
     saving_file = open("Contacts.txt", "w")
     for i in range(0 , len(contacts)):
         saving_file.write(str(i)+"\n")
+        saving_file.write(str(contacts[i].id) + "\n")
         saving_file.write(contacts[i].name +"\n")
         saving_file.write(contacts[i].lastname +"\n")
         saving_file.write(str(contacts[i].age)+"\n")
@@ -48,11 +60,34 @@ def update_contact(c):
         c.name = input("New name?")
         c.lastname = input("New lastname?")
         c.age = input("New age?")
-        c.phone_number = input("New phone number?")
+        numbers = [ ]
+        flag = "yes"
+        while flag == "yes":
+                numbers.append(input("Enter a phone number"))
+                flag = input("Enter no if you are ready to continue")      
+        c.phone_number = Phone_number(numbers)
         c.email = input("New email?")
 
-def hide_contact(c):
-        pass
+def generator_hide_contacts(contacts):
+        
+    id_to_hide = input("Enter contact id to hide ")
+    for i in contacts:
+        if i.id is not id_to_hide:
+            yield i.id
+            yield i.name
+            yield i.lastname
+            yield i.phone_number
+            yield i.age
+            yield i.email
+
+def hide_contact(contacts):
+    g = generator_hide_contacts(contacts)
+    while True:
+        try:
+            print(next(g))
+        except StopIteration:
+            break
+
     
 
 
@@ -83,9 +118,14 @@ if __name__ == '__main__':
                     name = input("Contact name? ")
                     lastname = input("Contact lastname? ")
                     age = input("Contact age? ")
-                    phone_number = input("Contact phone number? ")
+                    numbers = [ ]
+                    flag = "yes"
+                    while flag == "yes":
+                         numbers.append(input("Enter a phone number: "))
+                         flag = input("Enter no if you are ready to continue or yes to enter another numbers: ")      
+                    contact_numbers = Phone_number(numbers)
                     email = input("Contact email? ")
-                    c = Contact(id, name, lastname, age, phone_number, email)
+                    c = Contact(id, name, lastname, age, contact_numbers, email)
                     option_dictionary[str(option)](contacts,c)
             elif option == 2:
                     sorted_contacts = option_dictionary[str(option)](contacts)
@@ -96,11 +136,10 @@ if __name__ == '__main__':
                             print("Name: " + s.name)
                             print("Lastname: " + s.lastname)
                             print("Age: " + s.age)
-                            print("Phone number: " + s.phone_number)
+                            print("Phone number: " + str(s.phone_number))
                             print("Email: " + s.email)
                             print("Creation date: " + str(s.date_created))
                             print("-------------------------------------------\n")
-                            
                             i += 1
                     
             elif option == 3:
@@ -110,7 +149,8 @@ if __name__ == '__main__':
                     contact_to_update = [x for x in contacts if x.id == id]
                     option_dictionary[str(option)](contact_to_update[0])
             elif option == 5: 
-                    pass
+                    option_dictionary[str(option)](contacts)
+        
 
                  
 
